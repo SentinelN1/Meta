@@ -1,25 +1,35 @@
 #include <iostream>
-#include "player_class.hpp"
-#include "team_class.hpp"
+#include "player.hpp"
+#include "team.hpp"
+#include "match.hpp"
+
+using std::cout;
 
 int main()
 {
-    Player player_J1m("J1m", France);
-    Player player_s1ndy("s1ndy", Finland);
-    Player player_AliaN("AliaN", Switzerland);
-    Player player_Arche("Arche", Switzerland);
-    Player player_M3rCuRy("M3rCuRy", France);
+    Team Legion("Legion");
+    Player Felix("Felix", Canada, &Legion);
+    Player KvN("KvN", Canada, &Legion);
+    Player Oliver("Oliver", Canada, &Legion);
+    Player MicroN("MicroN", Canada, &Legion);
+    Player R3D("R3D", Canada, &Legion);
 
-    // std::cout << player_J1m.getNickname() << " " << player_J1m.getCountry() << "\n";
-    std::cout << player_s1ndy.getNickname() << "\n";
+    Team CRYSTAL("CRYSTAL");
+    Player StorM("StorM", Brazil, &CRYSTAL);
+    Player BlitZz("BlitZz", Brazil, &CRYSTAL);
+    Player CNBL("CNBL", Brazil, &CRYSTAL);
+    Player ZENN("ZENN", Brazil, &CRYSTAL);
+    Player NoiSe("NoiSe", Brazil, &CRYSTAL);
 
-    Team team_Sirius;
-    team_Sirius.setName("Sirius");
+    // Team Sirius("Sirius");
+    // Player J1m("J1m", France, &Sirius);
+    // Player s1ndy("s1ndy", Finland, &Sirius);
+    // Player AliaN("AliaN", Switzerland, &Sirius);
+    // Player Arche("Arche", Switzerland, &Sirius);
+    // Player M3rCuRy("M3rCuRy", France, &Sirius);
+    // Player FrOzeN("FrOzeN", Switzerland, &Sirius);
 
-    // std::cout << team_Sirius.getName() << "\n";
-
-    team_Sirius.addPlayer(&player_s1ndy);
-    std::cout << player_s1ndy.getTeam()->getName() << "\n";
+    cout << BlitZz.getTeam()->getName() << "\t" << BlitZz.getNickname() << "\n";
 
     return 0;
 }
