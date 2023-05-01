@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <chrono>
 #include <string>
 #include <vector>
@@ -6,19 +7,6 @@
 
 using namespace std::chrono;
 using std::string, std::vector, std::list;
-
-enum Lane
-{
-    Easy,
-    Mid,
-    Hard
-};
-
-enum RoleMOBA
-{
-    Core,
-    Support
-};
 
 enum Country
 {
@@ -89,11 +77,12 @@ class Player
 {
 private:
     // Player
-    unsigned long long int id_;
+    int id_;
     string nickname_;
 
     // Bio and personal data
-    unsigned int age_;
+    // unsigned int age_;
+    // DATE birth;
     string firstName_;
     string lastName_;
     string name_;
@@ -104,64 +93,80 @@ private:
     int position_;
     bool isActive_;
     bool isCaptain_;
-    // bool isSniper_;
-    // bool isEntry_;
     bool isCoach_;
 
-    // Stats
-    unsigned int power_;
-    unsigned long long int kills_;
-    unsigned long long int deaths_;
-    unsigned long long int matchesPlayed_;
-    unsigned long long int matchesWon_;
-    unsigned long long int matchesLost_;
+    int power_;
+    int kills_;
+    int deaths_;
 
-public:
-    // Player();
-    Player(/*const unsigned long long int &, */ const string &, const Country &, Team *);
-    ~Player();
+    int matchesPlayed_;
+    int matchesWon_;
+    int matchesLost_;
 
-    // Setters
-    void setNickname(const string &);
-    void setName(const string &);
-    void setCountry(const Country &);
-    void setAge(const unsigned int &);
     void setTeam(Team *);
+
     void setPosition(const int &);
+
     void setActive();
     void setInactive();
-    void setPower(const unsigned int &);
-    void setKills(const unsigned long long int &);
-    void setDeaths(const unsigned long long int &);
-    void setMatchesPlayed(const unsigned long long int &);
-    void setMatchesWon(const unsigned long long int &);
-    void setMatchesLost(const unsigned long long int &);
 
-    // Getters
+    void setPower(const int &);
+
+    void setKills(const int &);
+    void setDeaths(const int &);
+
+    void setMatchesPlayed(const int &);
+    void setMatchesWon(const int &);
+    void setMatchesLost(const int &);
+
+public:
+    friend class Team;
+
+    Player(const string &, const Country &);
+    ~Player();
+
+    void setNickname(const string &);
     string getNickname() const;
+
+    void setName(const string &);
     string getName() const;
+
+    void setCountry(const Country &);
     Country getCountry() const;
-    unsigned int getAge() const;
+
+    // void setAge(const unsigned int &);
+    // unsigned int getAge() const;
+
     Team *getTeam() const;
+
     int getPosition() const;
-    unsigned int getPower() const;
-    unsigned long long int getKills() const;
-    unsigned long long int getDeaths() const;
-    unsigned long long int getMatchesPlayed() const;
-    unsigned long long int getMatchesWon() const;
-    unsigned long long int getMatchesLost() const;
+
+    bool isActive() const;
+    bool isCaptain() const;
+    bool isCoach() const;
+
+    int getPower() const;
+    int getKills() const;
+    int getDeaths() const;
+    int getMatchesPlayed() const;
+    int getMatchesWon() const;
+    int getMatchesLost() const;
 
     // void Serialize();
     // void kill(Player *);
 };
 
 // Constructor
-Player::Player(/*const unsigned int &id, */ const string &nickname, const Country &country, Team *pTeam = nullptr)
+Player::Player(const string &nickname, const Country &country)
 {
     // id_ = id;
     nickname_ = nickname;
     country_ = country;
-    pTeam_ = pTeam;
+    pTeam_ = nullptr;
+    position_ = 0;
+    isActive_ = false;
+    isCaptain_ = false;
+    isCoach_ = false;
     matchesPlayed_ = 0;
     matchesWon_ = 0;
     matchesLost_ = 0;
@@ -192,15 +197,15 @@ Country Player::getCountry() const
     return country_;
 }
 
-void Player::setAge(const unsigned int &age)
-{
-    age_ = age;
-}
+// void Player::setAge(const int &age)
+// {
+//     age_ = age;
+// }
 
-unsigned int Player::getAge() const
-{
-    return age_;
-}
+// int Player::getAge() const
+// {
+//     return age_;
+// }
 
 void Player::setTeam(Team *pTeam)
 {
@@ -232,62 +237,77 @@ void Player::setInactive()
     isActive_ = false;
 }
 
-void Player::setPower(const unsigned int &power)
+bool Player::isActive() const
+{
+    return isActive_;
+}
+
+bool Player::isCaptain() const
+{
+    return isCaptain_;
+}
+
+bool Player::isCoach() const
+{
+    return isCoach_;
+}
+
+void Player::setPower(const int &power)
 {
     power_ = power;
 }
 
-unsigned int Player::getPower() const
+int Player::getPower() const
 {
     return matchesLost_;
 }
 
-void Player::setKills(const unsigned long long int &kills)
+void Player::setKills(const int &kills)
 {
     kills_ = kills;
 }
 
-unsigned long long int Player::getKills() const
+int Player::getKills() const
 {
     return kills_;
 }
 
-void Player::setDeaths(const unsigned long long int &deaths)
+void Player::setDeaths(const int &deaths)
 {
     deaths_ = deaths;
 }
 
-unsigned long long int Player::getDeaths() const
+int Player::getDeaths() const
 {
     return deaths_;
 }
 
-void Player::setMatchesPlayed(const unsigned long long int &matchesPlayed)
+void Player::setMatchesPlayed(const int &matchesPlayed)
 {
     matchesPlayed_ = matchesPlayed;
 }
 
-unsigned long long int Player::getMatchesPlayed() const
+int Player::getMatchesPlayed() const
 {
     return matchesPlayed_;
 }
 
-void Player::setMatchesWon(const unsigned long long int &matchesWon)
+void Player::setMatchesWon(const int &matchesWon)
 {
     matchesWon_ = matchesWon;
 }
 
-unsigned long long int Player::getMatchesWon() const
+int Player::getMatchesWon() const
 {
     return matchesWon_;
 }
 
-void Player::setMatchesLost(const unsigned long long int &matchesLost)
+void Player::setMatchesLost(const int &matchesLost)
 {
     matchesLost_ = matchesLost;
 }
 
-unsigned long long int Player::getMatchesLost() const
+int Player::getMatchesLost() const
 {
     return matchesLost_;
 }

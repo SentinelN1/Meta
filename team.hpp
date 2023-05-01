@@ -1,53 +1,54 @@
 #pragma once
 #include <algorithm>
+#include <map>
+#include <unordered_set>
 #include "player.hpp"
 
-#define TEAM_SIZE 5
+using std::string, std::vector, std::list, std::map, std::unordered_set, std::find;
 
-using std::string, std::vector, std::list;
+#define TEAM_SIZE 5
 
 class Team
 {
 private:
-    unsigned long long int id_;
+    int id_;
     string name_;
-    string tag_;
+    map<int, Player *> activePlayers_;
+    unordered_set<Player *> inactivePlayers_;
     Player *coach_;
-    vector<Player *> activePlayers_;
-    list<Player *> inactivePlayers_;
 
 public:
-    Team(/*const unsigned int &, */ const string &);
+    Team(const string &);
     ~Team();
 
     void setName(const string &);
-    void addInactivePlayer(Player *);
-    void addActivePlayer(Player *, const int &);
-    void *setCoach(Player *coach);
-
     string getName() const;
-    list<Player *> getInactivePlayers() const;
-    vector<Player *> getActivePlayers() const;
+
+    void addPlayerToActive(Player *, const int &);
+    void addPlayerToInactive(Player *);
+    map<int, Player *> getActivePlayers() const;
+    unordered_set<Player *> getInactivePlayers() const;
+    void removePlayer(Player *);
+
+    void addCoach(Player *coach);
+    void removeCoach();
     Player *getCoach() const;
 };
 
 // Constructor
-Team::Team(/*const unsigned int &id, */ const string &name)
+Team::Team(const string &name)
 {
-    // id_ = id;
     name_ = name;
-    activePlayers_ = vector<Player *>(TEAM_SIZE);
 }
 
 // Destructor
-Team::~Team() // = default;
+Team::~Team()
 {
     for (auto player : activePlayers_)
     {
-        if (player)
+        if (player.second)
         {
-            player->setTeam(nullptr);
-            player->setPosition(-1);
+            removePlayer(player.second);
         }
     }
 
@@ -55,7 +56,7 @@ Team::~Team() // = default;
     {
         if (player)
         {
-            player->setTeam(nullptr);
+            removePlayer(player);
         }
     }
 }
@@ -70,52 +71,110 @@ string Team::getName() const
     return name_;
 }
 
-void Team::addInactivePlayer(Player *player)
+void Team::removePlayer(Player *player)
 {
-    if (player)
+    if (player->getTeam() == this)
     {
-        inactivePlayers_.push_back(player);
-        player->setTeam(this);
-        player->setPosition(-1);
+        if (player == coach_)
+        {
+            coach_ = nullptr;
+            player->isCoach_ = false;
+        }
+        else if (activePlayers_[player->getPosition()] == player)
+        {
+            activePlayers_[player->getPosition()] = nullptr;
+        }
+        else
+        {
+            inactivePlayers_.erase(player);
+        }
+
+        player->setTeam(nullptr);
+        player->setInactive();
+        player->isCaptain_ = false;
+        player->isCoach_ = false;
+        player->setPosition(0);
     }
 }
 
-list<Player *> Team::getInactivePlayers() const
+void Team::addPlayerToInactive(Player *player)
+{
+    if (player)
+    {
+        if (player->getTeam())
+        {
+            player->getTeam()->removePlayer(player);
+        }
+        inactivePlayers_.insert(player);
+        player->setTeam(this);
+        player->setInactive();
+        player->setPosition(0);
+    }
+}
+
+unordered_set<Player *> Team::getInactivePlayers() const
 {
     return inactivePlayers_;
 }
 
-void Team::addActivePlayer(Player *player, const int &position)
+void Team::addPlayerToActive(Player *player, const int &position)
 {
     if (player)
     {
-        if (position < 0 || position >= 5)
+        if (position < 1 || position > 5)
         {
-            addInactivePlayer(player);
+            addPlayerToInactive(player);
             return;
         }
 
         if (activePlayers_[position])
         {
-            addInactivePlayer(activePlayers_[position]);
+            addPlayerToInactive(activePlayers_[position]);
+        }
+
+        if (player->getTeam())
+        {
+            player->getTeam()->removePlayer(player);
         }
 
         activePlayers_[position] = player;
-        player->setPosition(position);
-        
-        // TO DO : Remove player from previous team
-        Team *pTeam = player->getTeam();
-        if (pTeam)
-        {
-            // pTeam->inactivePlayers_.erase()
-        }
-
         player->setTeam(this);
         player->setActive();
+        player->setPosition(position);
     }
 }
 
-vector<Player *> Team::getActivePlayers() const
+map<int, Player *> Team::getActivePlayers() const
 {
     return activePlayers_;
+}
+
+void Team::addCoach(Player *coach)
+{
+    if (coach)
+    {
+        if (coach->getTeam())
+        {
+            coach->getTeam()->removePlayer(coach);
+        }
+        coach_ = coach;
+        coach->setTeam(this);
+        coach->isCoach_ = true;
+    }
+}
+
+void Team::removeCoach()
+{
+    if (coach_)
+    {
+        if (coach_->getTeam() == this)
+        {
+            coach_->getTeam()->removePlayer(coach_);
+        }
+    }
+}
+
+Player *Team::getCoach() const
+{
+    return coach_;
 }
