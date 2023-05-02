@@ -6,7 +6,9 @@
 #include <list>
 
 using namespace std::chrono;
-using std::string, std::vector, std::list;
+using std::string;
+using std::vector;
+using std::list;
 
 enum Country
 {

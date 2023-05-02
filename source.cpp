@@ -49,7 +49,7 @@ int main()
     // Player FrOzeN("FrOzeN", Switzerland);
 
     cout << BlitZz.getTeam()->getName() << " " << BlitZz.getNickname() << "\n";
-    cout << CRYSTAL.getCoach()->getNickname();
-
+    cout << CRYSTAL.getCoach()->getNickname() << "\n";
+    
     return 0;
 }

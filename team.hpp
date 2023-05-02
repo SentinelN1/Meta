@@ -4,7 +4,12 @@
 #include <unordered_set>
 #include "player.hpp"
 
-using std::string, std::vector, std::list, std::map, std::unordered_set, std::find;
+using std::string;
+using std::vector;
+using std::list;
+using std::map;
+using std::unordered_set;
+using std::find;
 
 #define TEAM_SIZE 5
 

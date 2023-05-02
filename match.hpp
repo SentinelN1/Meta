@@ -3,7 +3,9 @@
 #include "player.hpp"
 #include "team.hpp"
 
-using std::srand, std::rand, std::time;
+using std::time;
+using std::srand;
+using std::rand;
 
 class Match
 {
